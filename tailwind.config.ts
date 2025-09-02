@@ -26,7 +26,8 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					glow: 'hsl(var(--primary-glow))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -61,6 +62,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Director Clapper System Colors
+				clapper: {
+					black: 'hsl(var(--clapper-black))',
+					green: 'hsl(var(--clapper-green))',
+					yellow: 'hsl(var(--clapper-yellow))',
+					blue: 'hsl(var(--clapper-blue))',
+					red: 'hsl(var(--clapper-red))',
+					white: 'hsl(var(--clapper-white))',
+					'light-grey': 'hsl(var(--clapper-light-grey))',
+					grey: 'hsl(var(--clapper-grey))',
+					'dark-grey': 'hsl(var(--clapper-dark-grey))'
 				}
 			},
 			borderRadius: {
@@ -88,7 +101,21 @@ export default {
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'slide-in': 'slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+			},
+			backgroundImage: {
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-cinematic': 'var(--gradient-cinematic)',
+				'gradient-accent': 'var(--gradient-accent)',
+				'gradient-gold': 'var(--gradient-gold)'
+			},
+			boxShadow: {
+				'cinematic': 'var(--shadow-cinematic)',
+				'glow': 'var(--shadow-glow)',
+				'accent': 'var(--shadow-accent)'
 			}
 		}
 	},
