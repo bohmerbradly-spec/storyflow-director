@@ -67,9 +67,9 @@ export const LeftDrawerSystem: React.FC<LeftDrawerSystemProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => onToggle(!isOpen)}
+            onClick={() => onToggle(false)}
             className="w-12 h-12"
-            title={isOpen ? 'Collapse Drawer' : 'Expand Drawer'}
+            title="Close Drawer"
           >
             {isOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </Button>
