@@ -42,10 +42,30 @@ import {
   Move,
   ZoomIn,
   ZoomOut,
-  RotateCcw
+  RotateCcw,
+  Settings,
+  Maximize2,
+  Minimize2,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { AdvancedNodeSettings } from './AdvancedNodeSettings';
+
+// Import the generated images
+import executivePortrait from '@/assets/nodes/executive-portrait.jpg';
+import detectiveScene from '@/assets/nodes/detective-scene.jpg';
+import spacePilot from '@/assets/nodes/space-pilot.jpg';
+import boardroomBg from '@/assets/nodes/boardroom-bg.jpg';
+import cyberpunkStreet from '@/assets/nodes/cyberpunk-street.jpg';
+import spaceshipBridge from '@/assets/nodes/spaceship-bridge.jpg';
+import katanaProp from '@/assets/nodes/katana-prop.jpg';
+import lightingSetup from '@/assets/nodes/lighting-setup.jpg';
+import filmScript from '@/assets/nodes/film-script.jpg';
+import businessWardrobe from '@/assets/nodes/business-wardrobe.jpg';
+import cameraEquipment from '@/assets/nodes/camera-equipment.jpg';
+import audioMixing from '@/assets/nodes/audio-mixing.jpg';
 
 interface Node {
   id: string;
@@ -61,6 +81,16 @@ interface Node {
   metadata?: any;
   layer?: number;
   sceneId?: string;
+}
+
+interface Scene {
+  id: string;
+  title: string;
+  duration: number;
+  color: string;
+  preview: string;
+  nodes: Node[];
+  position: { x: number; y: number };
 }
 
 interface Connection {
@@ -126,107 +156,245 @@ const nodeTypes = {
   timeline: { icon: Clapperboard, color: 'text-gold-400', bgColor: 'bg-yellow-400/10', borderColor: 'border-yellow-400/50' }
 };
 
-const generatePreviewImage = (nodeType: string, title: string) => {
-  const patterns = {
-    character: '👤',
-    background: '🏙️',
-    prop: '⚔️',
-    script: '📝',
-    lighting: '💡',
-    style: '🎨',
-    wardrobe: '👔',
-    location: '📍',
-    camera: '📷',
-    weather: '☀️',
-    audio: '🎵',
-    music: '🎼',
-    voiceover: '🎤',
-    sfx: '🔊',
-    video: '🎬',
-    image: '🖼️',
-    finalcut: '🎞️',
-    timeline: '🎬'
-  };
-  return patterns[nodeType as keyof typeof patterns] || '📦';
+// Comprehensive script for the feature film
+const featureFilmScript = {
+  title: "NEON SHADOWS: Corporate Conspiracy",
+  logline: "In a cyberpunk future, an ambitious corporate executive discovers her company's dark secret while a detective hunts the truth through neon-lit streets.",
+  acts: [
+    {
+      act: 1,
+      title: "Setup - Corporate Façade",
+      scenes: [
+        {
+          sceneNumber: "1A",
+          title: "Executive Boardroom",
+          description: "INT. CORPORATE BOARDROOM - DAY",
+          fullDescription: "Alira Chen presents quarterly results to the board. Pristine glass office with city skyline. Camera: Establishing wide shot, then medium close-up. Lighting: Corporate clean, soft key with window backlight. Duration: 45s",
+          cameraAngles: ["Wide establishing", "Medium CU on Alira", "Over shoulder board reaction"],
+          lighting: "Natural window light + soft key fill",
+          props: ["Presentation screen", "Executive briefcase", "Glass conference table"],
+          wardrobe: "Tailored business suit, professional styling"
+        },
+        {
+          sceneNumber: "1B", 
+          title: "Character Moment",
+          description: "Alira's private moment of doubt",
+          fullDescription: "Close-up of Alira reviewing suspicious financial documents. Camera: Macro lens on documents, then tight close-up. Lighting: Desk lamp creating dramatic shadows. Duration: 30s",
+          cameraAngles: ["Macro on documents", "Tight CU reaction", "Wide office context"],
+          lighting: "Hard desk lamp, creating mystery",
+          props: ["Financial documents", "Desk lamp"],
+          wardrobe: "Same executive suit, slightly disheveled"
+        }
+      ]
+    },
+    {
+      act: 2,
+      title: "Confrontation - Street Level Truth",
+      scenes: [
+        {
+          sceneNumber: "2A",
+          title: "Detective Introduction",
+          description: "EXT. CYBERPUNK STREET - NIGHT",
+          fullDescription: "Marcus Storm walks through rain-soaked neon streets investigating corporate crime. Camera: Tracking shot following detective. Lighting: Neon reflections, dramatic noir. Duration: 90s",
+          cameraAngles: ["Tracking medium shot", "Low angle hero shot", "Wide establishing cityscape"],
+          lighting: "Neon street lights, rain reflections",
+          props: ["Katana blade", "Detective notepad", "Holographic displays"],
+          wardrobe: "Long detective coat, noir styling"
+        },
+        {
+          sceneNumber: "2B",
+          title: "Sword Combat",
+          description: "Marcus confronts corporate assassins",
+          fullDescription: "Dynamic fight sequence with traditional katana against futuristic weapons. Camera: Multiple angles, slow-motion highlights. Lighting: Strobing neon, dramatic shadows. Duration: 120s",
+          cameraAngles: ["Wide action", "Close-up blade work", "Slow motion impacts"],
+          lighting: "Strobing neon, high contrast shadows",
+          props: ["Katana sword", "Futuristic weapons", "Neon signs"],
+          wardrobe: "Combat-ready detective gear"
+        }
+      ]
+    },
+    {
+      act: 3,
+      title: "Resolution - Space Age Truth",
+      scenes: [
+        {
+          sceneNumber: "3A",
+          title: "Space Command",
+          description: "INT. SPACESHIP BRIDGE - CONTINUOUS",
+          fullDescription: "Luna Voss commands bridge operations while monitoring the corporate conspiracy from space. Camera: Sweeping crane shots. Lighting: Holographic blue glow. Duration: 60s",
+          cameraAngles: ["Sweeping crane shot", "Close-up on controls", "Wide bridge overview"],
+          lighting: "Blue holographic glow, sci-fi ambience",
+          props: ["Holographic displays", "Command chair", "Sci-fi controls"],
+          wardrobe: "Space pilot uniform, technical gear"
+        }
+      ]
+    }
+  ]
 };
 
-const initialNodes: Node[] = [
-  // Timeline Node (Main Film Strip)
-  { id: 'timeline1', type: 'timeline', title: 'Main Timeline', description: 'Complete Film Sequence', x: 200, y: 1200, connections: [], status: 'processing', layer: 0, preview: '🎞️' },
-  
-  // Layer 1: Script & Story Elements
-  { id: 'script1', type: 'script', title: 'Act I: Setup', description: 'Opening sequence screenplay', x: 100, y: 50, connections: ['scene1', 'scene2'], status: 'complete', layer: 1, preview: '📜' },
-  { id: 'script2', type: 'script', title: 'Act II: Confrontation', description: 'Midpoint action sequence', x: 300, y: 50, connections: ['scene3'], status: 'complete', layer: 1, preview: '📋' },
-  { id: 'script3', type: 'script', title: 'Act III: Resolution', description: 'Climax and resolution', x: 500, y: 50, connections: ['scene4'], status: 'processing', layer: 1, preview: '📄' },
-  
-  // Layer 2: Character Development
-  { id: 'char1', type: 'character', title: 'Alira Chen', description: 'Asian Executive, 28, Professional', x: 100, y: 200, connections: ['img1', 'img4', 'vid1'], status: 'complete', layer: 2, preview: '👩‍💼' },
-  { id: 'char2', type: 'character', title: 'Marcus Storm', description: 'Cyberpunk Detective, 35, Gruff', x: 300, y: 200, connections: ['img2', 'vid2'], status: 'complete', layer: 2, preview: '🕵️‍♂️' },
-  { id: 'char3', type: 'character', title: 'Luna Voss', description: 'Space Pilot, 26, Confident', x: 500, y: 200, connections: ['img8', 'vid7'], status: 'processing', layer: 2, preview: '👩‍🚀' },
-  
-  // Layer 3: Production Design
-  { id: 'style1', type: 'style', title: 'Cyberpunk Aesthetic', description: 'Neon-noir visual style', x: 100, y: 350, connections: ['bg1', 'light1'], status: 'complete', layer: 3, preview: '🌃' },
-  { id: 'style2', type: 'style', title: 'Corporate Clean', description: 'Modern minimalist design', x: 300, y: 350, connections: ['bg2', 'light2'], status: 'complete', layer: 3, preview: '🏢' },
-  { id: 'style3', type: 'style', title: 'Sci-Fi Command', description: 'Futuristic space aesthetic', x: 500, y: 350, connections: ['bg3', 'light3'], status: 'complete', layer: 3, preview: '🚀' },
-  
-  // Layer 4: Lighting Design
-  { id: 'light1', type: 'lighting', title: 'Neon Street Lighting', description: 'Dramatic cyberpunk illumination', x: 100, y: 500, connections: ['bg1', 'img2'], status: 'complete', layer: 4, preview: '💡' },
-  { id: 'light2', type: 'lighting', title: 'Corporate Ambience', description: 'Soft professional lighting', x: 300, y: 500, connections: ['bg2', 'img1'], status: 'complete', layer: 4, preview: '🔆' },
-  { id: 'light3', type: 'lighting', title: 'Space Bridge Glow', description: 'Holographic blue lighting', x: 500, y: 500, connections: ['bg3', 'img8'], status: 'complete', layer: 4, preview: '✨' },
-  
-  // Layer 5: Locations & Backgrounds
-  { id: 'bg1', type: 'background', title: 'Neo-Tokyo Streets', description: 'Neon-lit cyberpunk cityscape', x: 100, y: 650, connections: ['img2', 'vid2'], status: 'complete', layer: 5, preview: '🏙️' },
-  { id: 'bg2', type: 'background', title: 'Corporate Boardroom', description: 'Modern glass office, sunset view', x: 300, y: 650, connections: ['img1', 'vid1'], status: 'complete', layer: 5, preview: '🏢' },
-  { id: 'bg3', type: 'background', title: 'Spaceship Bridge', description: 'Futuristic command center', x: 500, y: 650, connections: ['img8', 'vid7'], status: 'complete', layer: 5, preview: '🚀' },
-  { id: 'location1', type: 'location', title: 'Warehouse District', description: 'Industrial area for chase scene', x: 700, y: 650, connections: ['img7', 'vid6'], status: 'idle', layer: 5, preview: '🏭' },
-  
-  // Layer 6: Props & Wardrobe
-  { id: 'prop1', type: 'prop', title: 'Katana Blade', description: 'Traditional Japanese sword', x: 100, y: 800, connections: ['img2', 'img3'], status: 'complete', layer: 6, preview: '⚔️' },
-  { id: 'prop2', type: 'prop', title: 'Holographic UI', description: 'Floating interface panels', x: 300, y: 800, connections: ['img8'], status: 'complete', layer: 6, preview: '📱' },
-  { id: 'prop3', type: 'prop', title: 'Luxury Briefcase', description: 'Leather, executive style', x: 500, y: 800, connections: ['img1'], status: 'complete', layer: 6, preview: '💼' },
-  { id: 'wardrobe1', type: 'wardrobe', title: 'Executive Suit', description: 'Tailored business attire', x: 700, y: 800, connections: ['char1'], status: 'complete', layer: 6, preview: '👔' },
-  { id: 'wardrobe2', type: 'wardrobe', title: 'Detective Coat', description: 'Long noir-style trench coat', x: 900, y: 800, connections: ['char2'], status: 'complete', layer: 6, preview: '🧥' },
-  
-  // Layer 7: Image Generation
-  { id: 'img1', type: 'image', title: 'Executive Portrait', description: 'Alira in boardroom setting', x: 100, y: 950, connections: ['vid1'], status: 'complete', layer: 7, preview: '🖼️' },
-  { id: 'img2', type: 'image', title: 'Detective Scene', description: 'Marcus with katana in Neo-Tokyo', x: 300, y: 950, connections: ['vid2'], status: 'complete', layer: 7, preview: '🌃' },
-  { id: 'img3', type: 'image', title: 'Action Sequence', description: 'Combat scene with sword', x: 500, y: 950, connections: ['vid3'], status: 'processing', layer: 7, preview: '⚔️' },
-  { id: 'img4', type: 'image', title: 'Character Study', description: 'Alira emotional range', x: 700, y: 950, connections: ['vid1'], status: 'complete', layer: 7, preview: '👤' },
-  { id: 'img5', type: 'image', title: 'Establishing Shot', description: 'Wide city panorama', x: 900, y: 950, connections: ['vid4'], status: 'idle', layer: 7, preview: '🌉' },
-  { id: 'img6', type: 'image', title: 'Close-up Drama', description: 'Intense character moment', x: 1100, y: 950, connections: ['vid5'], status: 'complete', layer: 7, preview: '😤' },
-  { id: 'img7', type: 'image', title: 'Vehicle Chase', description: 'Car action in warehouse', x: 1300, y: 950, connections: ['vid6'], status: 'processing', layer: 7, preview: '🚗' },
-  { id: 'img8', type: 'image', title: 'Sci-Fi Command', description: 'Luna on bridge with UI', x: 1500, y: 950, connections: ['vid7'], status: 'complete', layer: 7, preview: '🛸' },
-  
-  // Layer 8: Video Generation  
-  { id: 'vid1', type: 'video', title: 'Corporate Presentation', description: 'Alira speaking to camera', x: 200, y: 1100, connections: ['scene1'], status: 'complete', layer: 8, preview: '📹' },
-  { id: 'vid2', type: 'video', title: 'Detective Intro', description: 'Marcus walking through rain', x: 400, y: 1100, connections: ['scene2'], status: 'complete', layer: 8, preview: '🌧️' },
-  { id: 'vid3', type: 'video', title: 'Sword Fight', description: 'Dynamic combat sequence', x: 600, y: 1100, connections: ['scene2'], status: 'processing', layer: 8, preview: '⚔️' },
-  { id: 'vid4', type: 'video', title: 'City Flyover', description: 'Drone shot of skyline', x: 800, y: 1100, connections: ['scene3'], status: 'idle', layer: 8, preview: '🚁' },
-  { id: 'vid5', type: 'video', title: 'Emotional Beat', description: 'Character realization moment', x: 1000, y: 1100, connections: ['scene1'], status: 'complete', layer: 8, preview: '💭' },
-  { id: 'vid6', type: 'video', title: 'Chase Sequence', description: 'High-speed pursuit', x: 1200, y: 1100, connections: ['scene3'], status: 'processing', layer: 8, preview: '💨' },
-  { id: 'vid7', type: 'video', title: 'Space Opera', description: 'Luna commanding bridge', x: 1400, y: 1100, connections: ['scene4'], status: 'complete', layer: 8, preview: '🌌' },
-  
-  // Layer 9: Audio Elements
-  { id: 'music1', type: 'music', title: 'Corporate Theme', description: 'Professional orchestral score', x: 150, y: 1250, connections: ['scene1'], status: 'complete', layer: 9, preview: '🎼' },
-  { id: 'music2', type: 'music', title: 'Cyberpunk Beat', description: 'Electronic noir atmosphere', x: 350, y: 1250, connections: ['scene2'], status: 'complete', layer: 9, preview: '🎵' },
-  { id: 'sfx1', type: 'sfx', title: 'Combat SFX', description: 'Sword clashing, impacts', x: 550, y: 1250, connections: ['scene2'], status: 'processing', layer: 9, preview: '🔊' },
-  { id: 'voiceover1', type: 'voiceover', title: 'Narrator', description: 'Opening exposition voice', x: 750, y: 1250, connections: ['scene1'], status: 'complete', layer: 9, preview: '🎙️' },
-  { id: 'music3', type: 'music', title: 'Chase Music', description: 'High-energy electronic', x: 950, y: 1250, connections: ['scene3'], status: 'processing', layer: 9, preview: '🎶' },
-  { id: 'sfx2', type: 'sfx', title: 'Space Ambience', description: 'Sci-fi atmospheric sounds', x: 1150, y: 1250, connections: ['scene4'], status: 'complete', layer: 9, preview: '🌌' },
-  
-  // Layer 10: Final Scenes (feeding into timeline)
-  { id: 'scene1', type: 'finalcut', title: 'Scene 1: Boardroom', description: 'Executive presentation sequence', x: 200, y: 1400, connections: ['timeline1'], status: 'complete', layer: 10, preview: '🎬', sceneId: '1' },
-  { id: 'scene2', type: 'finalcut', title: 'Scene 2: Street Fight', description: 'Detective action sequence', x: 500, y: 1400, connections: ['timeline1'], status: 'complete', layer: 10, preview: '⚔️', sceneId: '2' },
-  { id: 'scene3', type: 'finalcut', title: 'Scene 3: Chase', description: 'High-speed pursuit', x: 800, y: 1400, connections: ['timeline1'], status: 'processing', layer: 10, preview: '🚗', sceneId: '3' },
-  { id: 'scene4', type: 'finalcut', title: 'Scene 4: Bridge', description: 'Space command sequence', x: 1100, y: 1400, connections: ['timeline1'], status: 'complete', layer: 10, preview: '🌌', sceneId: '4' }
+// Scene-based node organization
+const initialScenes: Scene[] = [
+  {
+    id: 'scene1',
+    title: 'Act I: Boardroom',
+    duration: 75,
+    color: 'bg-purple-500',
+    preview: executivePortrait,
+    position: { x: 200, y: 1400 },
+    nodes: [
+      // Script nodes for this scene
+      { id: 'script1-1', type: 'script', title: 'Scene 1A: Boardroom Setup', description: 'Executive presentation script', x: 50, y: 100, connections: ['char1-1'], status: 'complete', thumbnail: filmScript },
+      { id: 'script1-2', type: 'script', title: 'Scene 1B: Character Moment', description: 'Private doubt sequence', x: 50, y: 250, connections: ['char1-1'], status: 'complete', thumbnail: filmScript },
+      
+      // Character nodes
+      { id: 'char1-1', type: 'character', title: 'Alira Chen', description: 'Executive protagonist', x: 300, y: 150, connections: ['style1-1'], status: 'complete', thumbnail: executivePortrait },
+      
+      // Style and production
+      { id: 'style1-1', type: 'style', title: 'Corporate Aesthetic', description: 'Clean, professional look', x: 550, y: 100, connections: ['light1-1'], status: 'complete' },
+      { id: 'light1-1', type: 'lighting', title: 'Corporate Lighting', description: 'Soft professional illumination', x: 800, y: 100, connections: ['bg1-1'], status: 'complete', thumbnail: lightingSetup },
+      
+      // Backgrounds and locations
+      { id: 'bg1-1', type: 'background', title: 'Corporate Boardroom', description: 'Glass office with city view', x: 1050, y: 150, connections: ['cam1-1'], status: 'complete', thumbnail: boardroomBg },
+      
+      // Camera work
+      { id: 'cam1-1', type: 'camera', title: 'Boardroom Cameras', description: 'Multiple angle setup', x: 1300, y: 100, connections: ['img1-1'], status: 'complete', thumbnail: cameraEquipment },
+      
+      // Props and wardrobe
+      { id: 'prop1-1', type: 'prop', title: 'Executive Briefcase', description: 'Luxury leather briefcase', x: 300, y: 300, connections: ['img1-1'], status: 'complete' },
+      { id: 'wardrobe1-1', type: 'wardrobe', title: 'Executive Suit', description: 'Tailored business attire', x: 550, y: 250, connections: ['char1-1'], status: 'complete', thumbnail: businessWardrobe },
+      
+      // Media generation
+      { id: 'img1-1', type: 'image', title: 'Boardroom Render', description: 'Executive in boardroom setting', x: 1550, y: 150, connections: ['vid1-1'], status: 'complete', thumbnail: executivePortrait },
+      { id: 'vid1-1', type: 'video', title: 'Boardroom Sequence', description: 'Complete scene video', x: 1800, y: 150, connections: [], status: 'complete' },
+      
+      // Audio elements
+      { id: 'music1-1', type: 'music', title: 'Corporate Theme', description: 'Professional orchestral', x: 1550, y: 300, connections: ['vid1-1'], status: 'complete', thumbnail: audioMixing },
+      { id: 'voiceover1-1', type: 'voiceover', title: 'Executive Dialogue', description: 'Professional delivery', x: 1800, y: 300, connections: ['vid1-1'], status: 'complete', thumbnail: audioMixing }
+    ]
+  },
+  {
+    id: 'scene2',
+    title: 'Act II: Street Fight',
+    duration: 210,
+    color: 'bg-red-500',
+    preview: detectiveScene,
+    position: { x: 600, y: 1400 },
+    nodes: [
+      // Script nodes
+      { id: 'script2-1', type: 'script', title: 'Scene 2A: Detective Intro', description: 'Neo-Tokyo street investigation', x: 50, y: 500, connections: ['char2-1'], status: 'complete', thumbnail: filmScript },
+      { id: 'script2-2', type: 'script', title: 'Scene 2B: Combat Sequence', description: 'Katana fight choreography', x: 50, y: 650, connections: ['char2-1'], status: 'complete', thumbnail: filmScript },
+      
+      // Characters
+      { id: 'char2-1', type: 'character', title: 'Marcus Storm', description: 'Cyberpunk detective', x: 300, y: 550, connections: ['style2-1'], status: 'complete', thumbnail: detectiveScene },
+      
+      // Production design
+      { id: 'style2-1', type: 'style', title: 'Cyberpunk Noir', description: 'Dark neon aesthetic', x: 550, y: 500, connections: ['light2-1'], status: 'complete' },
+      { id: 'light2-1', type: 'lighting', title: 'Neon Street Lighting', description: 'Dramatic cyberpunk illumination', x: 800, y: 500, connections: ['bg2-1'], status: 'complete', thumbnail: lightingSetup },
+      { id: 'weather2-1', type: 'weather', title: 'Rain Effect', description: 'Atmospheric rain for streets', x: 800, y: 650, connections: ['bg2-1'], status: 'complete' },
+      
+      // Environment
+      { id: 'bg2-1', type: 'background', title: 'Cyberpunk Streets', description: 'Neon-lit rain-soaked cityscape', x: 1050, y: 550, connections: ['cam2-1'], status: 'complete', thumbnail: cyberpunkStreet },
+      { id: 'location2-1', type: 'location', title: 'Neo-Tokyo District', description: 'Futuristic urban environment', x: 1050, y: 700, connections: ['bg2-1'], status: 'complete' },
+      
+      // Camera and cinematography
+      { id: 'cam2-1', type: 'camera', title: 'Action Cameras', description: 'Dynamic fight cinematography', x: 1300, y: 500, connections: ['img2-1'], status: 'complete', thumbnail: cameraEquipment },
+      
+      // Props and wardrobe
+      { id: 'prop2-1', type: 'prop', title: 'Katana Blade', description: 'Traditional Japanese sword', x: 300, y: 700, connections: ['img2-1'], status: 'complete', thumbnail: katanaProp },
+      { id: 'prop2-2', type: 'prop', title: 'Holographic UI', description: 'Futuristic interface panels', x: 550, y: 650, connections: ['img2-1'], status: 'complete' },
+      { id: 'wardrobe2-1', type: 'wardrobe', title: 'Detective Coat', description: 'Noir-style trench coat', x: 550, y: 800, connections: ['char2-1'], status: 'complete' },
+      
+      // Media generation
+      { id: 'img2-1', type: 'image', title: 'Street Fight Render', description: 'Detective action scene', x: 1550, y: 550, connections: ['vid2-1'], status: 'complete', thumbnail: detectiveScene },
+      { id: 'img2-2', type: 'image', title: 'Combat Sequence', description: 'Sword fight dynamics', x: 1550, y: 700, connections: ['vid2-1'], status: 'processing' },
+      { id: 'vid2-1', type: 'video', title: 'Street Fight Video', description: 'Complete action sequence', x: 1800, y: 600, connections: [], status: 'complete' },
+      
+      // Audio design
+      { id: 'music2-1', type: 'music', title: 'Cyberpunk Beat', description: 'Electronic noir soundtrack', x: 1300, y: 750, connections: ['vid2-1'], status: 'complete', thumbnail: audioMixing },
+      { id: 'sfx2-1', type: 'sfx', title: 'Combat SFX', description: 'Sword clashes and impacts', x: 1550, y: 850, connections: ['vid2-1'], status: 'processing', thumbnail: audioMixing }
+    ]
+  },
+  {
+    id: 'scene3',
+    title: 'Act II: Chase Sequence',
+    duration: 90,
+    color: 'bg-orange-500',
+    preview: cyberpunkStreet,
+    position: { x: 1000, y: 1400 },
+    nodes: [
+      // Script and planning
+      { id: 'script3-1', type: 'script', title: 'Chase Choreography', description: 'High-speed pursuit sequence', x: 50, y: 900, connections: ['cam3-1'], status: 'complete', thumbnail: filmScript },
+      
+      // Cinematography focus
+      { id: 'cam3-1', type: 'camera', title: 'Chase Cameras', description: 'High-speed tracking shots', x: 300, y: 950, connections: ['img3-1'], status: 'complete', thumbnail: cameraEquipment },
+      { id: 'cam3-2', type: 'camera', title: 'Drone Footage', description: 'Aerial chase coverage', x: 300, y: 1100, connections: ['img3-1'], status: 'idle', thumbnail: cameraEquipment },
+      
+      // Environment and location
+      { id: 'location3-1', type: 'location', title: 'Warehouse District', description: 'Industrial chase environment', x: 550, y: 900, connections: ['bg3-1'], status: 'idle' },
+      { id: 'bg3-1', type: 'background', title: 'Industrial Zone', description: 'Warehouse and factory area', x: 800, y: 950, connections: ['img3-1'], status: 'idle' },
+      
+      // Props and vehicles
+      { id: 'prop3-1', type: 'prop', title: 'Chase Vehicle', description: 'Cyberpunk motorcycle', x: 550, y: 1050, connections: ['img3-1'], status: 'processing' },
+      
+      // Media generation
+      { id: 'img3-1', type: 'image', title: 'Chase Sequence', description: 'High-speed pursuit visuals', x: 1050, y: 950, connections: ['vid3-1'], status: 'processing' },
+      { id: 'vid3-1', type: 'video', title: 'Chase Video', description: 'Dynamic pursuit sequence', x: 1300, y: 950, connections: [], status: 'processing' },
+      
+      // Audio
+      { id: 'music3-1', type: 'music', title: 'Chase Music', description: 'High-energy electronic track', x: 1050, y: 1100, connections: ['vid3-1'], status: 'processing', thumbnail: audioMixing },
+      { id: 'sfx3-1', type: 'sfx', title: 'Vehicle SFX', description: 'Engine and chase sounds', x: 1300, y: 1100, connections: ['vid3-1'], status: 'idle', thumbnail: audioMixing }
+    ]
+  },
+  {
+    id: 'scene4',
+    title: 'Act III: Space Command',
+    duration: 60,
+    color: 'bg-blue-500',
+    preview: spacePilot,
+    position: { x: 1400, y: 1400 },
+    nodes: [
+      // Script
+      { id: 'script4-1', type: 'script', title: 'Bridge Command', description: 'Space operations sequence', x: 50, y: 1200, connections: ['char4-1'], status: 'complete', thumbnail: filmScript },
+      
+      // Character
+      { id: 'char4-1', type: 'character', title: 'Luna Voss', description: 'Space pilot commander', x: 300, y: 1250, connections: ['style4-1'], status: 'processing', thumbnail: spacePilot },
+      
+      // Production design
+      { id: 'style4-1', type: 'style', title: 'Sci-Fi Command', description: 'Futuristic space aesthetic', x: 550, y: 1200, connections: ['light4-1'], status: 'complete' },
+      { id: 'light4-1', type: 'lighting', title: 'Holographic Lighting', description: 'Blue sci-fi illumination', x: 800, y: 1200, connections: ['bg4-1'], status: 'complete', thumbnail: lightingSetup },
+      
+      // Environment
+      { id: 'bg4-1', type: 'background', title: 'Spaceship Bridge', description: 'Futuristic command center', x: 1050, y: 1250, connections: ['cam4-1'], status: 'complete', thumbnail: spaceshipBridge },
+      
+      // Technology and props
+      { id: 'prop4-1', type: 'prop', title: 'Holographic UI', description: 'Advanced control interfaces', x: 800, y: 1350, connections: ['img4-1'], status: 'complete' },
+      { id: 'prop4-2', type: 'prop', title: 'Command Chair', description: 'Captain\'s command station', x: 550, y: 1350, connections: ['img4-1'], status: 'complete' },
+      
+      // Cinematography
+      { id: 'cam4-1', type: 'camera', title: 'Bridge Cameras', description: 'Sweeping crane shots', x: 1300, y: 1200, connections: ['img4-1'], status: 'complete', thumbnail: cameraEquipment },
+      
+      // Media generation
+      { id: 'img4-1', type: 'image', title: 'Bridge Command', description: 'Sci-fi command sequence', x: 1550, y: 1250, connections: ['vid4-1'], status: 'complete', thumbnail: spacePilot },
+      { id: 'vid4-1', type: 'video', title: 'Space Sequence', description: 'Bridge operations video', x: 1800, y: 1250, connections: [], status: 'complete' },
+      
+      // Audio
+      { id: 'music4-1', type: 'music', title: 'Space Opera Score', description: 'Epic orchestral theme', x: 1550, y: 1400, connections: ['vid4-1'], status: 'complete', thumbnail: audioMixing },
+      { id: 'sfx4-1', type: 'sfx', title: 'Sci-Fi Ambience', description: 'Space bridge sounds', x: 1800, y: 1400, connections: ['vid4-1'], status: 'complete', thumbnail: audioMixing }
+    ]
+  }
 ];
 
-const timelineScenes = [
-  { id: 'scene1', title: 'Boardroom', duration: 45, color: 'bg-purple-500', preview: '🎬' },
-  { id: 'scene2', title: 'Street Fight', duration: 120, color: 'bg-red-500', preview: '⚔️' },
-  { id: 'scene3', title: 'Chase', duration: 90, color: 'bg-orange-500', preview: '🚗' },
-  { id: 'scene4', title: 'Bridge', duration: 60, color: 'bg-blue-500', preview: '🌌' }
-];
+// Timeline node
+const timelineNode: Node = { 
+  id: 'master-timeline', 
+  type: 'timeline', 
+  title: 'Master Timeline', 
+  description: 'Complete Feature Film', 
+  x: 800, 
+  y: 1600, 
+  connections: [], 
+  status: 'processing' 
+};
 
 export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
   activeMode,
@@ -234,23 +402,34 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
   leftDrawerOpen,
   rightDrawerOpen
 }) => {
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+  const [scenes, setScenes] = useState<Scene[]>(initialScenes);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const [viewport, setViewport] = useState<ViewportState>({ x: 0, y: 0, scale: 1 });
+  const [selectedNodeData, setSelectedNodeData] = useState<Node | null>(null);
+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const [viewport, setViewport] = useState<ViewportState>({ x: 0, y: 0, scale: 0.6 });
   const [dragState, setDragState] = useState<DragState>({ isDragging: false, nodeId: null, startX: 0, startY: 0, nodeStartX: 0, nodeStartY: 0 });
   const [panState, setPanState] = useState<PanState>({ isPanning: false, startX: 0, startY: 0, startViewportX: 0, startViewportY: 0 });
+  const [showProductionLayers, setShowProductionLayers] = useState(false);
   const workspaceRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Get all nodes from all scenes
+  const allNodes = scenes.flatMap(scene => scene.nodes).concat([timelineNode]);
 
   // Mouse and interaction handlers
   const handleNodeClick = useCallback((nodeId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedNode(nodeId);
-  }, []);
+    const node = allNodes.find(n => n.id === nodeId);
+    if (node) {
+      setSelectedNodeData(node);
+      setShowAdvancedSettings(true);
+    }
+  }, [allNodes]);
 
   const handleNodeDragStart = useCallback((e: React.MouseEvent, nodeId: string) => {
     e.stopPropagation();
-    const node = nodes.find(n => n.id === nodeId);
+    const node = allNodes.find(n => n.id === nodeId);
     if (!node) return;
     
     setDragState({
@@ -262,18 +441,27 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
       nodeStartY: node.y
     });
     setSelectedNode(nodeId);
-  }, [nodes]);
+  }, [allNodes]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (dragState.isDragging && dragState.nodeId) {
       const deltaX = (e.clientX - dragState.startX) / viewport.scale;
       const deltaY = (e.clientY - dragState.startY) / viewport.scale;
       
-      setNodes(prev => prev.map(node => 
-        node.id === dragState.nodeId 
-          ? { ...node, x: dragState.nodeStartX + deltaX, y: dragState.nodeStartY + deltaY }
-          : node
-      ));
+      // Update node position in the appropriate scene or timeline
+      if (dragState.nodeId === 'master-timeline') {
+        // Handle timeline node separately if needed
+        return;
+      }
+      
+      setScenes(prev => prev.map(scene => ({
+        ...scene,
+        nodes: scene.nodes.map(node => 
+          node.id === dragState.nodeId 
+            ? { ...node, x: dragState.nodeStartX + deltaX, y: dragState.nodeStartY + deltaY }
+            : node
+        )
+      })));
     } else if (panState.isPanning) {
       const deltaX = e.clientX - panState.startX;
       const deltaY = e.clientY - panState.startY;
@@ -315,7 +503,6 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
     const scaleFactor = e.deltaY > 0 ? 0.9 : 1.1;
     const newScale = Math.max(0.1, Math.min(3, viewport.scale * scaleFactor));
 
-    // Zoom towards mouse position
     const scaleChange = newScale / viewport.scale;
     setViewport(prev => ({
       scale: newScale,
@@ -325,7 +512,7 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
   }, [viewport.scale]);
 
   const resetView = useCallback(() => {
-    setViewport({ x: 0, y: 0, scale: 1 });
+    setViewport({ x: 0, y: 0, scale: 0.6 });
   }, []);
 
   const zoomIn = useCallback(() => {
@@ -334,6 +521,15 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
 
   const zoomOut = useCallback(() => {
     setViewport(prev => ({ ...prev, scale: Math.max(0.1, prev.scale * 0.8) }));
+  }, []);
+
+  const updateNode = useCallback((nodeId: string, updates: Partial<Node>) => {
+    setScenes(prev => prev.map(scene => ({
+      ...scene,
+      nodes: scene.nodes.map(node =>
+        node.id === nodeId ? { ...node, ...updates } : node
+      )
+    })));
   }, []);
 
   // Event listeners
@@ -365,7 +561,7 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
       <div
         key={node.id}
         className={cn(
-          'absolute w-72 bg-card border-2 rounded-xl p-4 cursor-move transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm',
+          'absolute w-64 bg-card border-2 rounded-xl p-3 cursor-move transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm',
           nodeType?.borderColor || 'border-gray-400/50',
           nodeType?.bgColor || 'bg-gray-400/10',
           isSelected && 'ring-2 ring-primary shadow-2xl scale-105 z-20',
@@ -377,22 +573,22 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
         style={{ 
           left: node.x, 
           top: node.y,
-          transform: isDraggingThis ? 'rotate(2deg)' : 'rotate(0deg)'
+          transform: isDraggingThis ? 'rotate(1deg)' : 'rotate(0deg)'
         }}
         onClick={(e) => handleNodeClick(node.id, e)}
         onMouseDown={(e) => handleNodeDragStart(e, node.id)}
       >
         {/* Node Header */}
-        <div className="flex items-center gap-3 mb-3">
-          <div className={cn('p-2 rounded-lg', nodeType?.bgColor || 'bg-gray-400/10')}>
-            <Icon className={cn('h-5 w-5', nodeType?.color || 'text-gray-400')} />
+        <div className="flex items-center gap-2 mb-2">
+          <div className={cn('p-1.5 rounded-lg', nodeType?.bgColor || 'bg-gray-400/10')}>
+            <Icon className={cn('h-4 w-4', nodeType?.color || 'text-gray-400')} />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm truncate text-foreground">{node.title}</h3>
-            <p className="text-xs text-muted-foreground truncate">{node.description}</p>
+            <h3 className="font-semibold text-xs truncate text-foreground">{node.title}</h3>
+            <p className="text-[10px] text-muted-foreground truncate">{node.description}</p>
           </div>
           <div className={cn(
-            'w-3 h-3 rounded-full border',
+            'w-2 h-2 rounded-full border',
             node.status === 'complete' && 'bg-green-400 border-green-300',
             node.status === 'processing' && 'bg-yellow-400 border-yellow-300 animate-pulse',
             node.status === 'idle' && 'bg-gray-400 border-gray-300',
@@ -400,30 +596,23 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
           )} />
         </div>
 
-        {/* Node Preview with Visual */}
-        <div className="mb-3">
+        {/* Node Preview with Real Photo */}
+        <div className="mb-2">
           <div className={cn(
-            'w-full h-32 rounded-lg border-2 flex items-center justify-center relative overflow-hidden',
+            'w-full h-24 rounded-lg border-2 flex items-center justify-center relative overflow-hidden',
             nodeType?.borderColor || 'border-gray-400/50',
             'bg-gradient-to-br from-muted/30 to-muted/60'
           )}>
-            {node.preview ? (
-              <div className="text-center">
-                <div className="text-4xl mb-2">{node.preview}</div>
-                <div className="text-xs text-muted-foreground font-medium">
-                  {node.status === 'complete' && 'Generated'}
-                  {node.status === 'processing' && 'Processing...'}
-                  {node.status === 'idle' && 'Ready'}
-                  {node.status === 'error' && 'Error'}
-                </div>
-              </div>
+            {node.thumbnail ? (
+              <img 
+                src={node.thumbnail} 
+                alt={node.title}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <div className="text-center">
-                {node.status === 'complete' && <Sparkles className={cn('h-8 w-8 mx-auto mb-2', nodeType?.color)} />}
-                {node.status === 'processing' && <Zap className={cn('h-8 w-8 mx-auto mb-2 animate-pulse', nodeType?.color)} />}
-                {node.status === 'idle' && <Wand2 className={cn('h-8 w-8 mx-auto mb-2', nodeType?.color)} />}
-                {node.status === 'error' && <Target className="h-8 w-8 mx-auto mb-2 text-red-400" />}
-                <span className="text-xs text-muted-foreground">
+                <Icon className={cn('h-6 w-6 mx-auto mb-1', nodeType?.color)} />
+                <span className="text-[10px] text-muted-foreground">
                   {node.status === 'complete' && 'Generated'}
                   {node.status === 'processing' && 'Processing...'}
                   {node.status === 'idle' && 'Ready'}
@@ -431,34 +620,27 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
                 </span>
               </div>
             )}
-            
-            {/* Layer indicator */}
-            {node.layer !== undefined && (
-              <div className="absolute top-2 right-2 bg-primary/80 text-primary-foreground text-xs px-2 py-1 rounded-full font-medium">
-                L{node.layer}
-              </div>
-            )}
           </div>
         </div>
 
         {/* Node Actions */}
-        <div className="flex gap-2">
-          <Button size="sm" variant="ghost" className="flex-1 text-xs" onClick={(e) => e.stopPropagation()}>
-            <Edit className="h-3 w-3 mr-1" />
+        <div className="flex gap-1">
+          <Button size="sm" variant="ghost" className="flex-1 text-[10px] h-6" onClick={(e) => e.stopPropagation()}>
+            <Edit className="h-2.5 w-2.5 mr-1" />
             Edit
           </Button>
-          <Button size="sm" variant="ghost" className="flex-1 text-xs" onClick={(e) => e.stopPropagation()}>
-            <Play className="h-3 w-3 mr-1" />
+          <Button size="sm" variant="ghost" className="flex-1 text-[10px] h-6" onClick={(e) => e.stopPropagation()}>
+            <Play className="h-2.5 w-2.5 mr-1" />
             Generate
           </Button>
         </div>
 
         {/* Connection Points */}
-        <div className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-primary rounded-full border-2 border-background flex items-center justify-center">
-          <div className="w-2 h-2 bg-primary-foreground rounded-full" />
+        <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-primary rounded-full border-2 border-background flex items-center justify-center">
+          <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full" />
         </div>
-        <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-secondary rounded-full border-2 border-background flex items-center justify-center">
-          <div className="w-2 h-2 bg-secondary-foreground rounded-full" />
+        <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-secondary rounded-full border-2 border-background flex items-center justify-center">
+          <div className="w-1.5 h-1.5 bg-secondary-foreground rounded-full" />
         </div>
       </div>
     );
@@ -467,28 +649,24 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
   const renderConnections = () => {
     const connections: JSX.Element[] = [];
     
-    nodes.forEach(node => {
+    allNodes.forEach(node => {
       node.connections.forEach(targetId => {
-        const targetNode = nodes.find(n => n.id === targetId);
+        const targetNode = allNodes.find(n => n.id === targetId);
         if (!targetNode) return;
         
-        const startX = node.x + 288; // Node width (272) + connection point (16)
-        const startY = node.y + 90; // Roughly center of node
+        const startX = node.x + 256; // Node width + connection point
+        const startY = node.y + 60; // Roughly center of node
         const endX = targetNode.x;
-        const endY = targetNode.y + 90;
+        const endY = targetNode.y + 60;
         
         const controlPoint1X = startX + Math.abs(endX - startX) * 0.3;
         const controlPoint1Y = startY;
         const controlPoint2X = endX - Math.abs(endX - startX) * 0.3;
         const controlPoint2Y = endY;
         
-        // Different colors for different connection types
         const getConnectionColor = () => {
           if (targetNode.type === 'timeline') return 'hsl(var(--primary))';
           if (targetNode.type === 'finalcut') return 'hsl(var(--accent))';
-          if (node.layer !== undefined && targetNode.layer !== undefined) {
-            return node.layer < targetNode.layer ? 'hsl(var(--primary))' : 'hsl(var(--secondary))';
-          }
           return 'hsl(var(--muted-foreground))';
         };
         
@@ -501,14 +679,14 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
             <defs>
               <marker
                 id={`arrowhead-${node.id}-${targetId}`}
-                markerWidth="10"
-                markerHeight="7"
-                refX="9"
-                refY="3.5"
+                markerWidth="8"
+                markerHeight="6"
+                refX="7"
+                refY="3"
                 orient="auto"
               >
                 <polygon
-                  points="0 0, 10 3.5, 0 7"
+                  points="0 0, 8 3, 0 6"
                   fill={getConnectionColor()}
                 />
               </marker>
@@ -516,11 +694,11 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
             <path
               d={`M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`}
               stroke={getConnectionColor()}
-              strokeWidth="3"
+              strokeWidth="2"
               fill="none"
-              strokeDasharray="8,4"
+              strokeDasharray="6,3"
               markerEnd={`url(#arrowhead-${node.id}-${targetId})`}
-              className="drop-shadow-sm opacity-80 hover:opacity-100 transition-opacity"
+              className="drop-shadow-sm opacity-60 hover:opacity-100 transition-opacity"
             />
           </svg>
         );
@@ -530,126 +708,202 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
     return connections;
   };
 
+  const renderSceneConnections = () => {
+    const connections: JSX.Element[] = [];
+    
+    scenes.forEach(scene => {
+      const sceneX = scene.position.x;
+      const sceneY = scene.position.y;
+      const timelineX = timelineNode.x + 128;
+      const timelineY = timelineNode.y + 60;
+      
+      const controlPoint1X = sceneX + 100;
+      const controlPoint1Y = sceneY;
+      const controlPoint2X = timelineX - 100;
+      const controlPoint2Y = timelineY;
+      
+      connections.push(
+        <svg
+          key={`scene-${scene.id}-timeline`}
+          className="absolute inset-0 pointer-events-none"
+          style={{ width: '100%', height: '100%' }}
+        >
+          <defs>
+            <marker
+              id={`scene-arrow-${scene.id}`}
+              markerWidth="12"
+              markerHeight="8"
+              refX="10"
+              refY="4"
+              orient="auto"
+            >
+              <polygon
+                points="0 0, 12 4, 0 8"
+                fill="hsl(var(--primary))"
+              />
+            </marker>
+          </defs>
+          <path
+            d={`M ${sceneX} ${sceneY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${timelineX} ${timelineY}`}
+            stroke="hsl(var(--primary))"
+            strokeWidth="4"
+            fill="none"
+            strokeDasharray="12,6"
+            markerEnd={`url(#scene-arrow-${scene.id})`}
+            className="drop-shadow-lg opacity-80 hover:opacity-100 transition-opacity"
+          />
+        </svg>
+      );
+    });
+    
+    return connections;
+  };
+
   const renderFilmTimeline = () => {
-    const timelineNode = nodes.find(n => n.type === 'timeline');
-    if (!timelineNode) return null;
-    
-    const totalDuration = timelineScenes.reduce((sum, scene) => sum + scene.duration, 0);
-    
     return (
       <div 
-        className="absolute bg-card border-2 border-primary rounded-2xl p-6 shadow-2xl backdrop-blur-sm"
+        className="absolute bg-card border-4 border-primary rounded-2xl p-8 shadow-2xl backdrop-blur-sm"
         style={{ 
-          left: timelineNode.x - 100, 
-          top: timelineNode.y + 150,
-          minWidth: '800px'
+          left: timelineNode.x - 200, 
+          top: timelineNode.y + 120,
+          minWidth: '1000px'
         }}
       >
         {/* Timeline Header */}
-        <div className="flex items-center gap-4 mb-4">
-          <div className="flex items-center gap-2">
-            <Clapperboard className="h-8 w-8 text-primary animate-pulse" />
+        <div className="flex items-center gap-6 mb-6">
+          <div className="flex items-center gap-3">
+            <Clapperboard className="h-10 w-10 text-primary animate-pulse" />
             <div>
-              <h3 className="font-bold text-2xl text-primary">Master Timeline</h3>
-              <p className="text-sm text-muted-foreground">Total Runtime: {totalDuration}s • {Math.floor(totalDuration/60)}:{(totalDuration%60).toString().padStart(2, '0')}</p>
+              <h3 className="font-bold text-3xl text-primary">{featureFilmScript.title}</h3>
+              <p className="text-sm text-muted-foreground">{featureFilmScript.logline}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Total Runtime: {scenes.reduce((sum, scene) => sum + scene.duration, 0)}s • 
+                {Math.floor(scenes.reduce((sum, scene) => sum + scene.duration, 0)/60)}:{(scenes.reduce((sum, scene) => sum + scene.duration, 0)%60).toString().padStart(2, '0')}
+              </p>
             </div>
           </div>
         </div>
         
-        {/* Film Strip Container */}
-        <div className="relative bg-gradient-to-r from-muted/40 via-muted/20 to-muted/40 rounded-xl p-4 border-2 border-dashed border-primary/30">
+        {/* Enhanced Film Strip Container */}
+        <div className="relative bg-gradient-to-r from-muted/40 via-muted/20 to-muted/40 rounded-xl p-6 border-4 border-dashed border-primary/30">
           {/* Sprocket Holes Top */}
-          <div className="flex justify-between absolute top-2 left-4 right-4">
-            {[...Array(20)].map((_, i) => (
-              <div key={`top-${i}`} className="w-2 h-2 bg-muted-foreground/30 rounded-full" />
+          <div className="flex justify-between absolute top-3 left-6 right-6">
+            {[...Array(25)].map((_, i) => (
+              <div key={`top-${i}`} className="w-2.5 h-2.5 bg-muted-foreground/40 rounded-full" />
+            ))}
+          </div>
+          
+          {/* Frame Numbers */}
+          <div className="flex justify-between absolute top-8 left-6 right-6 text-xs text-muted-foreground font-mono">
+            {scenes.map((_, index) => (
+              <span key={index} className="bg-muted/80 px-2 py-1 rounded">
+                {String(index + 1).padStart(2, '0')}
+              </span>
             ))}
           </div>
           
           {/* Main Film Strip */}
-          <div className="flex gap-2 my-4 px-2">
-            {timelineScenes.map((scene, index) => {
-              const sceneNode = nodes.find(n => n.sceneId === scene.id.replace('scene', ''));
-              return (
-                <div key={scene.id} className="flex flex-col items-center gap-2">
-                  {/* Scene Preview */}
-                  <div
-                    className={cn(
-                      'relative rounded-lg border-2 border-white shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden',
-                      scene.color,
-                      'group'
-                    )}
-                    style={{ 
-                      width: `${Math.max(120, scene.duration * 1.5)}px`, 
-                      height: '80px' 
-                    }}
-                    title={`${scene.title} - ${scene.duration}s`}
-                  >
-                    {/* Scene Visual */}
-                    <div className="absolute inset-0 flex items-center justify-center text-white">
-                      <div className="text-center">
-                        <div className="text-2xl mb-1">{scene.preview}</div>
-                        <div className="text-xs font-bold">{scene.duration}s</div>
-                      </div>
-                    </div>
-                    
-                    {/* Scene Status Indicator */}
-                    <div className={cn(
-                      'absolute top-1 right-1 w-2 h-2 rounded-full',
-                      sceneNode?.status === 'complete' && 'bg-green-400',
-                      sceneNode?.status === 'processing' && 'bg-yellow-400 animate-pulse',
-                      sceneNode?.status === 'idle' && 'bg-gray-400',
-                      sceneNode?.status === 'error' && 'bg-red-400'
-                    )} />
-                    
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Play className="h-6 w-6 text-white" />
+          <div className="flex gap-3 my-8 px-4">
+            {scenes.map((scene, index) => (
+              <div key={scene.id} className="flex flex-col items-center gap-3">
+                {/* Scene Preview Frame */}
+                <div
+                  className={cn(
+                    'relative rounded-lg border-4 border-white shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden',
+                    scene.color,
+                    'group'
+                  )}
+                  style={{ 
+                    width: `${Math.max(150, scene.duration * 2)}px`, 
+                    height: '100px' 
+                  }}
+                  title={`${scene.title} - ${scene.duration}s`}
+                >
+                  {/* Scene Visual with Real Photo */}
+                  <div className="absolute inset-0">
+                    <img 
+                      src={scene.preview} 
+                      alt={scene.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-2 left-2 text-white">
+                      <div className="text-xs font-bold">{scene.duration}s</div>
                     </div>
                   </div>
                   
-                  {/* Scene Label */}
-                  <div className="text-center">
-                    <div className="text-xs font-semibold text-foreground">{scene.title}</div>
-                    <div className="text-xs text-muted-foreground">Scene {index + 1}</div>
+                  {/* Scene Status Indicator */}
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    <div className={cn(
+                      'w-2 h-2 rounded-full',
+                      'bg-green-400' // All scenes complete for demo
+                    )} />
                   </div>
+                  
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Play className="h-8 w-8 text-white" />
+                  </div>
+
+                  {/* Film Perforations */}
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-black/20" />
+                  <div className="absolute right-0 top-0 bottom-0 w-1 bg-black/20" />
                 </div>
-              );
-            })}
+                
+                {/* Scene Info */}
+                <div className="text-center">
+                  <div className="text-sm font-bold text-foreground">{scene.title}</div>
+                  <div className="text-xs text-muted-foreground">Act {Math.floor(index / 2) + 1}</div>
+                  <div className="text-xs text-muted-foreground">{scene.nodes.length} nodes</div>
+                </div>
+              </div>
+            ))}
           </div>
           
           {/* Sprocket Holes Bottom */}
-          <div className="flex justify-between absolute bottom-2 left-4 right-4">
-            {[...Array(20)].map((_, i) => (
-              <div key={`bottom-${i}`} className="w-2 h-2 bg-muted-foreground/30 rounded-full" />
+          <div className="flex justify-between absolute bottom-3 left-6 right-6">
+            {[...Array(25)].map((_, i) => (
+              <div key={`bottom-${i}`} className="w-2.5 h-2.5 bg-muted-foreground/40 rounded-full" />
             ))}
+          </div>
+          
+          {/* Timeline Track Labels */}
+          <div className="absolute left-2 top-1/2 transform -translate-y-1/2 space-y-2">
+            <div className="text-xs bg-red-500 text-white px-2 py-1 rounded-full font-bold">VIDEO</div>
+            <div className="text-xs bg-green-500 text-white px-2 py-1 rounded-full font-bold">AUDIO</div>
+            <div className="text-xs bg-blue-500 text-white px-2 py-1 rounded-full font-bold">FX</div>
           </div>
         </div>
         
-        {/* Timeline Controls */}
-        <div className="flex justify-between items-center mt-6">
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="gap-2">
-              <Play className="h-4 w-4" />
-              Preview Timeline
+        {/* Enhanced Timeline Controls */}
+        <div className="flex justify-between items-center mt-8">
+          <div className="flex gap-3">
+            <Button variant="default" className="gap-2">
+              <Play className="h-5 w-5" />
+              Preview Film
             </Button>
-            <Button size="sm" variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              Export Film
+            <Button variant="outline" className="gap-2">
+              <Download className="h-5 w-5" />
+              Export Master
+            </Button>
+            <Button variant="outline" className="gap-2">
+              <Settings className="h-5 w-5" />
+              Timeline Settings
             </Button>
           </div>
           
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-green-400 rounded-full" />
-              <span>Complete</span>
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-400 rounded-full" />
+              <span className="text-muted-foreground">Complete</span>
             </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-              <span>Processing</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse" />
+              <span className="text-muted-foreground">Processing</span>
             </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-gray-400 rounded-full" />
-              <span>Pending</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gray-400 rounded-full" />
+              <span className="text-muted-foreground">Pending</span>
             </div>
           </div>
         </div>
@@ -664,7 +918,7 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
       onMouseDown={handlePanStart}
     >
       {/* Zoom Controls */}
-      <div className="fixed top-20 left-4 bg-card border border-primary rounded-xl p-2 shadow-xl z-50">
+      <div className="fixed top-20 left-4 z-40 bg-card border border-primary rounded-xl p-2 shadow-xl">
         <div className="flex flex-col gap-2">
           <Button size="sm" variant="outline" onClick={zoomIn} title="Zoom In">
             <ZoomIn className="h-4 w-4" />
@@ -681,15 +935,73 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
         </div>
       </div>
 
-      {/* Grid Background */}
+      {/* Production Layers Panel - Minimized by Default */}
+      <div className={cn(
+        "fixed top-20 right-4 z-40 bg-card border border-primary rounded-xl shadow-xl transition-all duration-300",
+        showProductionLayers ? "w-80 h-96" : "w-12 h-12"
+      )}>
+        <div className="p-2">
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            onClick={() => setShowProductionLayers(!showProductionLayers)}
+            className="w-8 h-8"
+            title="Production Layers"
+          >
+            {showProductionLayers ? <Minimize2 className="h-4 w-4" /> : <Layers className="h-4 w-4" />}
+          </Button>
+          
+          {showProductionLayers && (
+            <div className="mt-2 space-y-2">
+              <h4 className="text-sm font-semibold">Production Layers</h4>
+              <div className="space-y-1 text-xs">
+                <div className="flex items-center gap-2 p-2 rounded bg-muted/20">
+                  <div className="w-3 h-3 bg-slate-400 rounded" />
+                  <span>Scripts & Story</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded bg-muted/20">
+                  <div className="w-3 h-3 bg-purple-400 rounded" />
+                  <span>Characters</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded bg-muted/20">
+                  <div className="w-3 h-3 bg-fuchsia-400 rounded" />
+                  <span>Production Design</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded bg-muted/20">
+                  <div className="w-3 h-3 bg-amber-400 rounded" />
+                  <span>Lighting</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded bg-muted/20">
+                  <div className="w-3 h-3 bg-blue-400 rounded" />
+                  <span>Environments</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded bg-muted/20">
+                  <div className="w-3 h-3 bg-emerald-400 rounded" />
+                  <span>Media Generation</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded bg-muted/20">
+                  <div className="w-3 h-3 bg-yellow-400 rounded" />
+                  <span>Audio Design</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded bg-muted/20">
+                  <div className="w-3 h-3 bg-pink-400 rounded" />
+                  <span>Final Output</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Enhanced Grid Background */}
       <div 
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-10"
         style={{
           backgroundImage: `
             linear-gradient(hsl(var(--border)) 1px, transparent 1px),
             linear-gradient(90deg, hsl(var(--border)) 1px, transparent 1px)
           `,
-          backgroundSize: `${50 * viewport.scale}px ${50 * viewport.scale}px`,
+          backgroundSize: `${40 * viewport.scale}px ${40 * viewport.scale}px`,
           backgroundPosition: `${viewport.x}px ${viewport.y}px`
         }}
       />
@@ -701,164 +1013,57 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
         style={{
           transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.scale})`,
           transformOrigin: '0 0',
-          minWidth: '3000px',
-          minHeight: '2000px'
+          minWidth: '4000px',
+          minHeight: '2500px'
         }}
       >
-        {/* Layer Background Indicators */}
-        {Array.from(new Set(nodes.map(n => n.layer).filter(l => l !== undefined))).sort().map(layer => (
+        {/* Scene Containers */}
+        {scenes.map(scene => (
           <div
-            key={`layer-${layer}`}
-            className="absolute left-0 right-0 bg-muted/5 border-l-4 border-primary/20"
-            style={{
-              top: layer! * 150 + 25,
-              height: 125,
-              zIndex: -1
-            }}
+            key={scene.id}
+            className="absolute"
+            style={{ left: scene.position.x - 100, top: scene.position.y - 100, width: 2000, height: 400 }}
           >
-            <div className="absolute left-4 top-2 text-xs font-semibold text-muted-foreground bg-background px-2 py-1 rounded">
-              Layer {layer}
+            {/* Scene Background */}
+            <div className={cn(
+              'absolute inset-0 rounded-2xl border-2 border-dashed opacity-20',
+              scene.color.replace('bg-', 'border-').replace('-500', '-300')
+            )} />
+            
+            {/* Scene Label */}
+            <div className={cn(
+              'absolute -top-8 left-4 px-4 py-2 rounded-lg text-white font-bold text-sm shadow-lg',
+              scene.color
+            )}>
+              {scene.title} ({scene.nodes.length} nodes)
             </div>
+            
+            {/* Scene Nodes */}
+            {scene.nodes.map(renderNode)}
           </div>
         ))}
         
-        {/* Render connections first (behind nodes) */}
-        {renderConnections()}
+        {/* Timeline Node */}
+        {renderNode(timelineNode)}
         
-        {/* Render all nodes */}
-        {nodes.map(renderNode)}
+        {/* Render all connections */}
+        {renderConnections()}
+        {renderSceneConnections()}
         
         {/* Film Timeline */}
         {renderFilmTimeline()}
       </div>
       
-      {/* Floating Node Creation Toolbar */}
-      <div className="fixed top-20 right-4 bg-card border border-primary rounded-xl p-3 shadow-xl z-50">
-        <h4 className="text-xs font-semibold text-muted-foreground mb-2">Add Nodes</h4>
-        <div className="grid grid-cols-2 gap-2">
-          <Button size="sm" variant="outline" title="Add Character" className="p-2">
-            <User className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" title="Add Background" className="p-2">
-            <Mountain className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" title="Add Script" className="p-2">
-            <FileText className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" title="Add Style" className="p-2">
-            <StyleIcon className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" title="Add Lighting" className="p-2">
-            <Lightbulb className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" title="Add Prop" className="p-2">
-            <Package className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" title="Add Image" className="p-2">
-            <Image className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" title="Add Video" className="p-2">
-            <Video className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" title="Add Audio" className="p-2">
-            <Volume2 className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" title="Add Music" className="p-2">
-            <Music className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-      
-      {/* Layer Legend */}
-      <div className="fixed bottom-4 left-4 bg-card border border-primary rounded-xl p-3 shadow-xl z-50 max-w-xs">
-        <h4 className="text-xs font-semibold text-muted-foreground mb-2">Production Layers</h4>
-        <div className="space-y-1 text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-slate-400 rounded-full" />
-            <span>L1: Script & Story</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-purple-400 rounded-full" />
-            <span>L2: Characters</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-fuchsia-400 rounded-full" />
-            <span>L3: Style Design</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-amber-400 rounded-full" />
-            <span>L4: Lighting</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-400 rounded-full" />
-            <span>L5: Locations</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-orange-400 rounded-full" />
-            <span>L6: Props & Wardrobe</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full" />
-            <span>L7: Image Generation</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-red-400 rounded-full" />
-            <span>L8: Video Generation</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-yellow-400 rounded-full" />
-            <span>L9: Audio Elements</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-pink-400 rounded-full" />
-            <span>L10: Final Scenes</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Selected Node Info */}
-      {selectedNode && (
-        <div className="fixed bottom-4 right-4 bg-card border border-primary rounded-xl p-4 shadow-xl z-50 max-w-sm">
-          {(() => {
-            const node = nodes.find(n => n.id === selectedNode);
-            if (!node) return null;
-            const nodeType = nodeTypes[node.type];
-            const Icon = nodeType?.icon || Package;
-            
-            return (
-              <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className={cn('p-2 rounded-lg', nodeType?.bgColor)}>
-                    <Icon className={cn('h-5 w-5', nodeType?.color)} />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">{node.title}</h4>
-                    <p className="text-sm text-muted-foreground capitalize">{node.type} Node</p>
-                  </div>
-                </div>
-                <p className="text-sm mb-3">{node.description}</p>
-                <div className="flex items-center justify-between text-xs">
-                  <span>Layer {node.layer || 'N/A'}</span>
-                  <span className={cn(
-                    'px-2 py-1 rounded-full',
-                    node.status === 'complete' && 'bg-green-100 text-green-800',
-                    node.status === 'processing' && 'bg-yellow-100 text-yellow-800',
-                    node.status === 'idle' && 'bg-gray-100 text-gray-800',
-                    node.status === 'error' && 'bg-red-100 text-red-800'
-                  )}>
-                    {node.status}
-                  </span>
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-      )}
-      
-      {/* Cinematic Vignette */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-background/10" />
-      </div>
+      {/* Advanced Node Settings Modal */}
+      <AdvancedNodeSettings
+        node={selectedNodeData}
+        isOpen={showAdvancedSettings}
+        onClose={() => {
+          setShowAdvancedSettings(false);
+          setSelectedNodeData(null);
+        }}
+        onUpdateNode={updateNode}
+      />
     </div>
   );
 };

@@ -106,38 +106,56 @@ export const LeftDrawerSystem: React.FC<LeftDrawerSystemProps> = ({
 const NodesContent: React.FC<{ activeMode: string }> = ({ activeMode }) => (
   <div className="p-4 space-y-4">
     <div className="text-sm text-muted-foreground mb-4">
-      Drag and drop nodes to build your {activeMode} workflow
+      Drag and drop nodes to build your cinematic workflow
     </div>
     
     {/* Node Categories */}
     <div className="space-y-6">
       <div>
-        <h3 className="text-sm font-medium text-primary mb-3">Generation</h3>
+        <h3 className="text-sm font-medium text-primary mb-3">Characters & Assets</h3>
         <div className="grid grid-cols-2 gap-2">
-          <NodeCard title="Image Gen" type="generation" />
-          <NodeCard title="Video Gen" type="generation" />
-          <NodeCard title="Audio Gen" type="generation" />
-          <NodeCard title="Text Gen" type="generation" />
+          <NodeCard title="Character" type="character" icon="👤" />
+          <NodeCard title="Background" type="background" icon="🏙️" />
+          <NodeCard title="Props" type="prop" icon="⚔️" />
+          <NodeCard title="Wardrobe" type="wardrobe" icon="👔" />
         </div>
       </div>
 
       <div>
-        <h3 className="text-sm font-medium text-accent mb-3">Processing</h3>
+        <h3 className="text-sm font-medium text-accent mb-3">Production</h3>
         <div className="grid grid-cols-2 gap-2">
-          <NodeCard title="Enhance" type="processing" />
-          <NodeCard title="Filter" type="processing" />
-          <NodeCard title="Segment" type="processing" />
-          <NodeCard title="Track" type="processing" />
+          <NodeCard title="Script" type="script" icon="📝" />
+          <NodeCard title="Camera" type="camera" icon="📷" />
+          <NodeCard title="Lighting" type="lighting" icon="💡" />
+          <NodeCard title="Style" type="style" icon="🎨" />
         </div>
       </div>
 
       <div>
-        <h3 className="text-sm font-medium text-secondary mb-3">Input/Output</h3>
+        <h3 className="text-sm font-medium text-secondary mb-3">Media Generation</h3>
         <div className="grid grid-cols-2 gap-2">
-          <NodeCard title="Import" type="io" />
-          <NodeCard title="Export" type="io" />
-          <NodeCard title="Record" type="io" />
-          <NodeCard title="Stream" type="io" />
+          <NodeCard title="Image" type="image" icon="🖼️" />
+          <NodeCard title="Video" type="video" icon="🎬" />
+          <NodeCard title="Audio" type="audio" icon="🎵" />
+          <NodeCard title="Voice" type="voiceover" icon="🎙️" />
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-medium text-emerald-400 mb-3">Environment</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <NodeCard title="Location" type="location" icon="📍" />
+          <NodeCard title="Weather" type="weather" icon="☀️" />
+          <NodeCard title="SFX" type="sfx" icon="🔊" />
+          <NodeCard title="Music" type="music" icon="🎼" />
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-medium text-orange-400 mb-3">Output</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <NodeCard title="Scene" type="finalcut" icon="🎞️" />
+          <NodeCard title="Timeline" type="timeline" icon="🎬" />
         </div>
       </div>
     </div>
@@ -189,11 +207,14 @@ const LibraryContent: React.FC<{ activeMode: string }> = ({ activeMode }) => (
   </div>
 );
 
-const NodeCard: React.FC<{ title: string; type: string }> = ({ title, type }) => (
+const NodeCard: React.FC<{ title: string; type: string; icon: string }> = ({ title, type, icon }) => (
   <div className={cn(
     'p-3 rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors cursor-pointer',
-    'hover:shadow-accent hover:border-accent/50'
+    'hover:shadow-accent hover:border-accent/50 hover:scale-105 transform transition-transform'
   )}>
-    <div className="text-sm font-medium">{title}</div>
+    <div className="flex items-center gap-2">
+      <span className="text-lg">{icon}</span>
+      <div className="text-sm font-medium">{title}</div>
+    </div>
   </div>
 );
