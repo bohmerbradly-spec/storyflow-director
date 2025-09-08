@@ -17,7 +17,7 @@ export const DirectorLayout: React.FC<DirectorLayoutProps> = ({ className }) => 
   const [rightDrawerOpen, setRightDrawerOpen] = useState(true);
   const [leftDrawerTab, setLeftDrawerTab] = useState('nodes');
   const [rightDrawerTab, setRightDrawerTab] = useState('chat');
-  const [timelineMode, setTimelineMode] = useState<'mini' | 'medium' | 'full'>('medium');
+  const [timelineMode, setTimelineMode] = useState<'mini' | 'medium' | 'full'>('mini');
 
   const handleModeChange = (mode: string) => {
     if (mode === 'director') {

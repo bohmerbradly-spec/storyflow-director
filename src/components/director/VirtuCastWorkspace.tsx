@@ -230,7 +230,7 @@ const featureFilmScript = {
 const GRID_SIZE = 80;
 const NODE_WIDTH = 280;
 const NODE_HEIGHT = 140;
-const MIN_NODE_SPACING = 20;
+const MIN_NODE_SPACING = 40;
 
 const getGridPosition = (x: number, y: number) => ({
   x: Math.round(x / GRID_SIZE) * GRID_SIZE,
@@ -283,26 +283,26 @@ const initialScenes: Scene[] = [
       { id: 'script1-master', type: 'script', title: 'Act I Master Script', description: 'Complete first act screenplay', x: 100, y: 100, connections: ['script1-1', 'script1-2', 'script1-3'], status: 'complete', thumbnail: filmScript },
       
       // Individual scene scripts
-      { id: 'script1-1', type: 'script', title: 'Corporate Presentation', description: 'Boardroom power dynamics', x: 400, y: 50, connections: ['char1-1'], status: 'complete', thumbnail: filmScript },
-      { id: 'script1-2', type: 'script', title: 'Data Discovery', description: 'Alira finds suspicious files', x: 400, y: 120, connections: ['char1-1'], status: 'complete', thumbnail: filmScript },
-      { id: 'script1-3', type: 'script', title: 'Reality Glitches', description: 'First Matrix anomalies', x: 400, y: 190, connections: ['char1-1'], status: 'complete', thumbnail: filmScript },
+      { id: 'script1-1', type: 'script', title: 'Corporate Presentation', description: 'Boardroom power dynamics', x: 450, y: 50, connections: ['char1-1'], status: 'complete', thumbnail: filmScript },
+      { id: 'script1-2', type: 'script', title: 'Data Discovery', description: 'Alira finds suspicious files', x: 450, y: 210, connections: ['char1-1'], status: 'complete', thumbnail: filmScript },
+      { id: 'script1-3', type: 'script', title: 'Reality Glitches', description: 'First Matrix anomalies', x: 450, y: 370, connections: ['char1-1'], status: 'complete', thumbnail: filmScript },
       
       // Main characters
-      { id: 'char1-1', type: 'character', title: 'Alira Chen', description: 'Corporate Executive / The One', x: 700, y: 120, connections: ['char1-2', 'style1-1'], status: 'complete', thumbnail: executivePortrait },
-      { id: 'char1-2', type: 'character', title: 'Board Members', description: 'Corporate power structure', x: 700, y: 220, connections: ['style1-1'], status: 'complete', thumbnail: executivePortrait },
+      { id: 'char1-1', type: 'character', title: 'Alira Chen', description: 'Corporate Executive / The One', x: 800, y: 130, connections: ['char1-2', 'style1-1'], status: 'complete', thumbnail: executivePortrait },
+      { id: 'char1-2', type: 'character', title: 'Board Members', description: 'Corporate power structure', x: 800, y: 290, connections: ['style1-1'], status: 'complete', thumbnail: executivePortrait },
       
       // Production design
-      { id: 'style1-1', type: 'style', title: 'Corporate Matrix Style', description: 'Clean facade hiding digital truth', x: 1000, y: 80, connections: ['light1-1', 'light1-2'], status: 'complete' },
-      { id: 'light1-1', type: 'lighting', title: 'Boardroom Lighting', description: 'Sterile corporate illumination', x: 1300, y: 50, connections: ['bg1-1'], status: 'complete', thumbnail: lightingSetup },
-      { id: 'light1-2', type: 'lighting', title: 'Office Noir', description: 'Dramatic shadows for discovery', x: 1300, y: 120, connections: ['bg1-2'], status: 'complete', thumbnail: lightingSetup },
+      { id: 'style1-1', type: 'style', title: 'Corporate Matrix Style', description: 'Clean facade hiding digital truth', x: 1150, y: 130, connections: ['light1-1', 'light1-2'], status: 'complete' },
+      { id: 'light1-1', type: 'lighting', title: 'Boardroom Lighting', description: 'Sterile corporate illumination', x: 1500, y: 50, connections: ['bg1-1'], status: 'complete', thumbnail: lightingSetup },
+      { id: 'light1-2', type: 'lighting', title: 'Office Noir', description: 'Dramatic shadows for discovery', x: 1500, y: 210, connections: ['bg1-2'], status: 'complete', thumbnail: lightingSetup },
       
       // Environments
-      { id: 'bg1-1', type: 'background', title: 'Corporate Boardroom', description: 'Glass towers and city views', x: 1600, y: 50, connections: ['cam1-1'], status: 'complete', thumbnail: boardroomBg },
-      { id: 'bg1-2', type: 'background', title: 'Executive Office', description: 'Private space for discovery', x: 1600, y: 120, connections: ['cam1-2'], status: 'complete', thumbnail: boardroomBg },
+      { id: 'bg1-1', type: 'background', title: 'Corporate Boardroom', description: 'Glass towers and city views', x: 1850, y: 50, connections: ['cam1-1'], status: 'complete', thumbnail: boardroomBg },
+      { id: 'bg1-2', type: 'background', title: 'Executive Office', description: 'Private space for discovery', x: 1850, y: 210, connections: ['cam1-2'], status: 'complete', thumbnail: boardroomBg },
       
       // Camera work
-      { id: 'cam1-1', type: 'camera', title: 'Corporate Cameras', description: 'Establishing and close-ups', x: 1900, y: 50, connections: ['img1-1'], status: 'complete', thumbnail: cameraEquipment },
-      { id: 'cam1-2', type: 'camera', title: 'Macro Detail', description: 'Document reveals and reactions', x: 1900, y: 120, connections: ['img1-2'], status: 'complete', thumbnail: cameraEquipment },
+      { id: 'cam1-1', type: 'camera', title: 'Corporate Cameras', description: 'Establishing and close-ups', x: 2200, y: 50, connections: ['img1-1'], status: 'complete', thumbnail: cameraEquipment },
+      { id: 'cam1-2', type: 'camera', title: 'Macro Detail', description: 'Document reveals and reactions', x: 2200, y: 210, connections: ['img1-2'], status: 'complete', thumbnail: cameraEquipment },
       
       // Props and technology
       { id: 'prop1-1', type: 'prop', title: 'Digital Interface', description: 'Holographic data displays', x: 700, y: 320, connections: ['img1-1'], status: 'complete' },
@@ -332,22 +332,22 @@ const initialScenes: Scene[] = [
       { id: 'script2-master', type: 'script', title: 'Act II Master Script', description: 'Street investigation and awakening', x: 100, y: 500, connections: ['script2-1', 'script2-2', 'script2-3', 'script2-4'], status: 'complete', thumbnail: filmScript },
       
       // Individual scenes
-      { id: 'script2-1', type: 'script', title: 'Detective Introduction', description: 'Marcus patrols neon streets', x: 400, y: 450, connections: ['char2-1'], status: 'complete', thumbnail: filmScript },
-      { id: 'script2-2', type: 'script', title: 'Digital Crime Scene', description: 'AI-generated evidence trail', x: 400, y: 520, connections: ['char2-1'], status: 'complete', thumbnail: filmScript },
-      { id: 'script2-3', type: 'script', title: 'Underground Club', description: 'First contact with resistance', x: 400, y: 590, connections: ['char2-1', 'char2-3'], status: 'complete', thumbnail: filmScript },
-      { id: 'script2-4', type: 'script', title: 'Katana Combat', description: 'Traditional vs digital weapons', x: 400, y: 660, connections: ['char2-1'], status: 'complete', thumbnail: filmScript },
+      { id: 'script2-1', type: 'script', title: 'Detective Introduction', description: 'Marcus patrols neon streets', x: 450, y: 450, connections: ['char2-1'], status: 'complete', thumbnail: filmScript },
+      { id: 'script2-2', type: 'script', title: 'Digital Crime Scene', description: 'AI-generated evidence trail', x: 450, y: 610, connections: ['char2-1'], status: 'complete', thumbnail: filmScript },
+      { id: 'script2-3', type: 'script', title: 'Underground Club', description: 'First contact with resistance', x: 450, y: 770, connections: ['char2-1', 'char2-3'], status: 'complete', thumbnail: filmScript },
+      { id: 'script2-4', type: 'script', title: 'Katana Combat', description: 'Traditional vs digital weapons', x: 450, y: 930, connections: ['char2-1'], status: 'complete', thumbnail: filmScript },
       
       // Characters
-      { id: 'char2-1', type: 'character', title: 'Marcus Storm', description: 'Neo-Tokyo Detective', x: 700, y: 520, connections: ['char2-2', 'style2-1'], status: 'complete', thumbnail: detectiveScene },
-      { id: 'char2-2', type: 'character', title: 'Agent Smith', description: 'AI enforcement program', x: 700, y: 620, connections: ['style2-2'], status: 'complete', thumbnail: detectiveScene },
-      { id: 'char2-3', type: 'character', title: 'Morpheus', description: 'Resistance leader mentor', x: 700, y: 720, connections: ['style2-1'], status: 'complete', thumbnail: detectiveScene },
+      { id: 'char2-1', type: 'character', title: 'Marcus Storm', description: 'Neo-Tokyo Detective', x: 800, y: 630, connections: ['char2-2', 'style2-1'], status: 'complete', thumbnail: detectiveScene },
+      { id: 'char2-2', type: 'character', title: 'Agent Smith', description: 'AI enforcement program', x: 800, y: 790, connections: ['style2-2'], status: 'complete', thumbnail: detectiveScene },
+      { id: 'char2-3', type: 'character', title: 'Morpheus', description: 'Resistance leader mentor', x: 800, y: 950, connections: ['style2-1'], status: 'complete', thumbnail: detectiveScene },
       
       // Production design
-      { id: 'style2-1', type: 'style', title: 'Cyberpunk Noir', description: 'Rain-soaked neon aesthetic', x: 1000, y: 480, connections: ['light2-1', 'light2-2'], status: 'complete' },
-      { id: 'style2-2', type: 'style', title: 'Matrix Code Style', description: 'Digital overlay effects', x: 1000, y: 580, connections: ['light2-3'], status: 'complete' },
+      { id: 'style2-1', type: 'style', title: 'Cyberpunk Noir', description: 'Rain-soaked neon aesthetic', x: 1150, y: 680, connections: ['light2-1', 'light2-2'], status: 'complete' },
+      { id: 'style2-2', type: 'style', title: 'Matrix Code Style', description: 'Digital overlay effects', x: 1150, y: 840, connections: ['light2-3'], status: 'complete' },
       
       // Lighting design
-      { id: 'light2-1', type: 'lighting', title: 'Neon Street Lighting', description: 'Pink and blue cyberpunk glow', x: 1300, y: 450, connections: ['bg2-1'], status: 'complete', thumbnail: lightingSetup },
+      { id: 'light2-1', type: 'lighting', title: 'Neon Street Lighting', description: 'Pink and blue cyberpunk glow', x: 1500, y: 610, connections: ['bg2-1'], status: 'complete', thumbnail: lightingSetup },
       { id: 'light2-2', type: 'lighting', title: 'Underground Club', description: 'Strobing rave atmosphere', x: 1300, y: 520, connections: ['bg2-2'], status: 'complete', thumbnail: lightingSetup },
       { id: 'light2-3', type: 'lighting', title: 'Matrix Interface', description: 'Green digital rain effect', x: 1300, y: 590, connections: ['bg2-3'], status: 'complete', thumbnail: lightingSetup },
       
@@ -831,19 +831,20 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
     const connections: JSX.Element[] = [];
     
     allNodes.forEach(node => {
+      if (!node.connections) return;
       node.connections.forEach(targetId => {
         const targetNode = allNodes.find(n => n.id === targetId);
         if (!targetNode) return;
         
-        // Better connection point calculation
+        // Better connection point calculation - from right edge of source to left edge of target
         const startX = node.x + NODE_WIDTH - 3; // Right connection point
         const startY = node.y + NODE_HEIGHT / 2; // Center vertically
         const endX = targetNode.x + 3; // Left connection point
         const endY = targetNode.y + NODE_HEIGHT / 2;
         
-        // Improved bezier curve calculation
+        // Improved bezier curve calculation for smoother flow
         const distance = Math.abs(endX - startX);
-        const controlOffset = Math.min(distance * 0.4, 150);
+        const controlOffset = Math.min(distance * 0.3, 120);
         const controlPoint1X = startX + controlOffset;
         const controlPoint1Y = startY;
         const controlPoint2X = endX - controlOffset;
@@ -864,14 +865,15 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
             <defs>
               <marker
                 id={`arrowhead-${node.id}-${targetId}`}
-                markerWidth="10"
-                markerHeight="8"
-                refX="9"
-                refY="4"
+                markerWidth="8"
+                markerHeight="6"
+                refX="7"
+                refY="3"
                 orient="auto"
+                markerUnits="strokeWidth"
               >
                 <polygon
-                  points="0 0, 10 4, 0 8"
+                  points="0 0, 8 3, 0 6"
                   fill={getConnectionColor()}
                 />
               </marker>
@@ -879,11 +881,11 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
             <path
               d={`M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`}
               stroke={getConnectionColor()}
-              strokeWidth="3"
+              strokeWidth="2"
               fill="none"
-              strokeDasharray="8,4"
+              strokeDasharray="6,3"
               markerEnd={`url(#arrowhead-${node.id}-${targetId})`}
-              className="drop-shadow-lg opacity-70 hover:opacity-100 transition-all duration-200"
+              className="drop-shadow-sm opacity-75 hover:opacity-100 transition-all duration-200"
             />
           </svg>
         );
@@ -1105,8 +1107,8 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
       className="relative w-full h-full bg-gradient-to-br from-background via-background to-muted/20 overflow-hidden cursor-grab active:cursor-grabbing"
       onMouseDown={handlePanStart}
     >
-      {/* Top Bar with Integrated Controls */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-card/90 backdrop-blur-sm border border-primary/20 rounded-xl p-2 shadow-xl">
+      {/* Diagram Controls - Positioned within workspace */}
+      <div className="absolute top-4 right-4 z-50 bg-card/90 backdrop-blur-sm border border-primary/20 rounded-xl p-2 shadow-xl">
         <div className="flex items-center gap-4">
           {/* Zoom Controls */}
           <div className="flex items-center gap-1 border-r border-border pr-4">
@@ -1137,12 +1139,12 @@ export const VirtuCastWorkspace: React.FC<VirtuCastWorkspaceProps> = ({
               <span className="text-xs">Layers</span>
             </Button>
           </div>
-          
-          {/* Film Info */}
-          <div className="border-l border-border pl-4">
-            <div className="text-xs font-semibold text-foreground">NEON MATRIX: Digital Awakening</div>
-            <div className="text-xs text-muted-foreground">2h 15min • {scenes.length} Acts • {allNodes.length - 1} Nodes</div>
-          </div>
+        </div>
+        
+        {/* Film Info */}
+        <div className="mt-2 pt-2 border-t border-border">
+          <div className="text-xs font-semibold text-foreground">NEON MATRIX: Digital Awakening</div>
+          <div className="text-xs text-muted-foreground">{scenes.length} Acts • {allNodes.length - 1} Nodes</div>
         </div>
       </div>
 
