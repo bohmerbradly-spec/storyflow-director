@@ -550,7 +550,6 @@ const initialScenes: Scene[] = [
     ]
   }
 ];
-];
 
 // Master timeline node with proper spacing
 const timelineNode: Node = { 
